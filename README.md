@@ -35,6 +35,16 @@ npm run lint
 Also generated: `sitemap.xml`, `robots.txt` (sign-in pages excluded), Organization and FAQPage
 structured data, a favicon, an Apple touch icon and a social share image (`public/og.png`).
 
+## Deploying to GitHub Pages
+
+`.github/workflows/deploy-pages.yml` builds the site and publishes it to
+https://manuelnort.github.io/Netra-Home-care/ on every push to `main`. It sets
+`NEXT_PUBLIC_BASE_PATH=/Netra-Home-care` because Pages serves the site from a subfolder.
+
+One-time setup: in the repo, go to **Settings → Pages → Build and deployment → Source** and
+choose **GitHub Actions**. When the site moves to its own domain, remove `NEXT_PUBLIC_BASE_PATH`
+and set `NEXT_PUBLIC_SITE_URL` to the domain.
+
 ## Configuration
 
 Company details live in `src/lib/site.ts`. Anything still `null` is hidden on the site, so
@@ -45,6 +55,7 @@ Environment variables (set them at build time):
 | Variable | What it does |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | The real domain, e.g. `https://www.example.com.gh`. Used for canonical URLs, the sitemap and share images. Defaults to localhost. |
+| `NEXT_PUBLIC_BASE_PATH` | Only when the site is served from a subfolder, like `/Netra-Home-care` on GitHub Pages. Leave unset on a real domain. |
 | `NEXT_PUBLIC_FORMS_ENDPOINT` | The staffing application's intake API. When it's empty, forms run in **preview mode**: they validate and show a confirmation, but nothing is sent, and every form says so clearly. |
 
 ### Forms contract

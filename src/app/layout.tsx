@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
-import { site } from "@/lib/site";
+import { absoluteUrl, site } from "@/lib/site";
 import "./globals.css";
 
 // Inter's optical-size axis gives large headings the tighter "display" cut.
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     locale: "en_GH",
     title: "Netra Home Care | Screened house helps in Accra",
     description: site.description,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Netra Home Care: reliable house helps, greater peace of mind" }],
+    images: [{ url: absoluteUrl("/og.png"), width: 1200, height: 630, alt: "Netra Home Care: reliable house helps, greater peace of mind" }],
   },
-  twitter: { card: "summary_large_image", images: ["/og.png"] },
+  twitter: { card: "summary_large_image", images: [absoluteUrl("/og.png")] },
   formatDetection: { telephone: false },
 };
 

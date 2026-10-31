@@ -28,6 +28,19 @@ export const site = {
   testimonials: [] as { quote: string; name: string; context: string }[],
 } as const;
 
+/** Subfolder the site is served from ("" on a normal domain). */
+export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/** Path to a file in /public. next/link adds the base path; plain <img> and manifests don't. */
+export function asset(path: string) {
+  return `${basePath}${path}`;
+}
+
+/** Full URL for sitemaps and robots. site.url already includes any subfolder. */
+export function absoluteUrl(path: string) {
+  return `${site.url.replace(/\/$/, "")}${path}`;
+}
+
 export function telHref(phone: string) {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
 }

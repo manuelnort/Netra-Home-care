@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { services } from "@/lib/services";
-import { site } from "@/lib/site";
+import { absoluteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -22,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/terms/",
   ];
   return paths.map((path) => ({
-    url: new URL(path, site.url).toString(),
+    url: absoluteUrl(path),
     changeFrequency: "monthly",
     priority: path === "/" ? 1 : path.startsWith("/services") || path === "/request/" ? 0.8 : 0.6,
   }));
