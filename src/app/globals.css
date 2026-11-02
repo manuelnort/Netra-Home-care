@@ -365,6 +365,10 @@ main:focus {
 /* ---------- Buttons ---------- */
 
 .btn {
+  --btn-fill: rgb(255 255 255 / 0.16);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -384,6 +388,38 @@ main:focus {
     color 0.15s ease,
     transform 0.15s ease;
 }
+/* The hover fill. It sits behind the label and grows leftward from the right
+   edge. With an icon box it starts as that box, so the box looks like it
+   spreads across the button. */
+.btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  right: 3px;
+  left: calc(100% - 3px);
+  border-radius: 9px;
+  background: var(--btn-fill);
+  opacity: 0;
+  transition:
+    left 0.5s var(--ease-out),
+    opacity 0.2s ease;
+}
+.btn:has(.btn-icon)::before {
+  left: calc(100% - 43px);
+  opacity: 1;
+}
+@media (hover: hover) {
+  .btn:not([disabled], [aria-disabled="true"]):hover::before {
+    left: 3px;
+    opacity: 1;
+  }
+}
+.btn:focus-visible::before {
+  left: 3px;
+  opacity: 1;
+}
 .btn:hover {
   text-decoration: none;
 }
@@ -393,9 +429,9 @@ main:focus {
 .btn svg {
   flex: none;
 }
-/* Square icon box inside a button */
+/* Square icon box inside a button. Its colour comes from the fill above. */
 .btn:has(.btn-icon) {
-  padding-right: 4px;
+  padding-right: 3px;
 }
 .btn-icon {
   display: grid;
@@ -403,30 +439,22 @@ main:focus {
   width: 40px;
   height: 40px;
   border-radius: 9px;
-  background: rgb(255 255 255 / 0.16);
   margin-left: 0.25rem;
 }
 
 .btn--primary {
+  --btn-fill: var(--dark-2);
   background: var(--dark);
   color: #fff;
-}
-.btn--primary:hover {
-  background: #000;
-}
-.btn--primary .btn-icon {
-  background: var(--dark-2);
 }
 
 .btn--accent {
   background: var(--accent);
   color: #fff;
 }
-.btn--accent:hover {
-  background: var(--accent-hover);
-}
 
 .btn--secondary {
+  --btn-fill: var(--surface-2);
   background: var(--surface);
   color: var(--ink);
   border-color: var(--line);
@@ -434,15 +462,15 @@ main:focus {
 .btn--secondary:hover {
   border-color: var(--line-strong);
 }
-.btn--secondary .btn-icon {
-  background: var(--surface-2);
-}
 
 .btn--ghost {
   background: transparent;
   color: var(--ink);
   padding-inline: 0.875rem;
   min-height: 44px;
+}
+.btn--ghost::before {
+  content: none;
 }
 .btn--ghost:hover {
   background: rgb(0 0 0 / 0.05);
@@ -506,28 +534,49 @@ main:focus {
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
 }
 .island-logo {
-  display: grid;
-  place-items: center;
-  width: 44px;
+  display: inline-flex;
+  align-items: center;
   height: 44px;
+  padding: 0 9px;
   border-radius: 12px;
   background: var(--accent);
   color: #fff;
+  text-decoration: none;
   flex: none;
+}
+.island-logo:hover {
+  text-decoration: none;
 }
 .island-logo svg {
   width: 26px;
   height: 26px;
+  flex: none;
 }
+/* Folding text: a one column grid that animates from 0fr to 1fr, so the
+   island grows to the text's real width with no fixed sizes. */
+.island-reveal {
+  display: grid;
+  grid-template-columns: 1fr;
+  transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.island-reveal > span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+/* Padding lives one level down so it folds away with the text. */
 .island-name {
-  display: none;
+  display: block;
   color: #fff;
   font-weight: 600;
   font-size: var(--text-sm);
   letter-spacing: -0.01em;
-  text-decoration: none;
-  padding: 0 0.5rem 0 0.375rem;
-  white-space: nowrap;
+  padding: 0 0.25rem 0 0.5rem;
+}
+.island-cta-label {
+  display: block;
+  padding-right: 0.5rem;
 }
 .island-nav {
   display: none;
@@ -562,9 +611,8 @@ main:focus {
 .island-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
   min-height: 44px;
-  padding: 0 0.375rem 0 0.875rem;
+  padding: 0 6px 0 0.875rem;
   border-radius: 12px;
   background: #fff;
   color: var(--ink);
@@ -610,9 +658,6 @@ main:focus {
     width: 100%;
     max-width: 40rem;
   }
-  .island-name {
-    display: inline;
-  }
   .island-cta {
     display: none;
   }
@@ -624,6 +669,22 @@ main:focus {
   .island-toggle,
   .island-mobile-spacer {
     display: none;
+  }
+}
+/* Desktop with a mouse: the island rests compact (logo square, links, arrow
+   square) and opens out on hover or keyboard focus. Touch screens keep it open. */
+@media (min-width: 1100px) and (hover: hover) {
+  .island-cta {
+    transition: padding-left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .island:not(:hover, :has(:focus-visible)) .island-reveal {
+    grid-template-columns: 0fr;
+  }
+  .island:not(:hover, :has(:focus-visible)) .island-reveal > span {
+    opacity: 0;
+  }
+  .island:not(:hover, :has(:focus-visible)) .island-cta {
+    padding-left: 6px;
   }
 }
 
@@ -1321,8 +1382,8 @@ main:focus {
   background: #fff;
   color: var(--ink);
 }
-.panel .btn--primary .btn-icon {
-  background: var(--surface-2);
+.panel .btn--primary {
+  --btn-fill: var(--surface-2);
 }
 .feature-list {
   list-style: none;
@@ -1770,16 +1831,14 @@ main:focus {
   background: #fff;
   color: var(--ink);
 }
-.cta-band .btn--primary .btn-icon {
-  background: var(--surface-2);
+.cta-band .btn--primary {
+  --btn-fill: var(--surface-2);
 }
 .cta-band .btn--secondary {
+  --btn-fill: #444;
   background: var(--dark-2);
   color: #fff;
   border-color: transparent;
-}
-.cta-band .btn--secondary .btn-icon {
-  background: #444;
 }
 .cta-band :focus-visible {
   outline-color: #fff;

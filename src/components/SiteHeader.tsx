@@ -31,12 +31,16 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="island">
+        {/* On desktop the name and the CTA text fold away until the island is
+            hovered or reached by keyboard. */}
         <Link href="/" className="island-logo" aria-label="Netra Home Care, home">
           <BrandMark />
+          <span className="island-reveal" aria-hidden>
+            <span>
+              <span className="island-name">Netra Home Care</span>
+            </span>
+          </span>
         </Link>
-        <span className="island-name" aria-hidden>
-          Netra Home Care
-        </span>
 
         <nav className="island-nav" aria-label="Main">
           <ul>
@@ -56,7 +60,11 @@ export function SiteHeader() {
         </nav>
 
         <Link href="/request/" className="island-cta">
-          Request a house help
+          <span className="island-reveal">
+            <span>
+              <span className="island-cta-label">Request a house help</span>
+            </span>
+          </span>
           <span className="arrow">
             <ArrowUpRight size={16} aria-hidden />
           </span>
